@@ -122,6 +122,8 @@
                                        #(lib.options/update-options % dissoc :base-type :effective-type)
                                        ;; ignore temporal-unit
                                        #(lib.options/update-options % dissoc :temporal-unit)
+                                       ;; ignore binning
+                                       #(lib.options/update-options % dissoc :binning)
                                        ;; ignore join alias
                                        #(lib.options/update-options % dissoc :join-alias)]]
      (or (let [a-ref (xform a-ref)]
