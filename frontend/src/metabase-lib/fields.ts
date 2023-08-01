@@ -1,4 +1,5 @@
 import * as ML from "cljs/metabase.lib.js";
+import type { FieldReference } from "metabase-types/api";
 import type { Clause, ColumnMetadata, Query } from "./types";
 
 export function fields(query: Query, stageIndex: number): Clause[] {
@@ -11,6 +12,22 @@ export function withFields(
   newFields: ColumnMetadata[],
 ): Query {
   return ML.with_fields(query, stageIndex, newFields);
+}
+
+export function addField(
+  query: Query,
+  stageIndex: number,
+  newField: ColumnMetadata,
+): Query {
+  return ML.add_field(query, stageIndex, newField);
+}
+
+export function removeField(
+  query: Query,
+  stageIndex: number,
+  targetField: ColumnMetadata,
+): Query {
+  return ML.remove_field(query, stageIndex, targetField);
 }
 
 export function fieldableColumns(
@@ -29,4 +46,8 @@ export function fieldableColumns(
  */
 export function _fieldId(column: ColumnMetadata): number | null {
   return ML.field_id(column);
+}
+
+export function legacyFieldRef(column: ColumnMetadata): FieldReference {
+  return ML.legacy_field_ref(column);
 }
