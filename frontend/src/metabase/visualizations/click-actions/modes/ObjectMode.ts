@@ -1,7 +1,8 @@
-import type { QueryMode } from "../types";
-import { ObjectDetailDrill } from "../drills/ObjectDetailDrill";
+// import { DefaultMode } from "metabase/visualizations/click-actions/modes/DefaultMode";
+import type { QueryClickActionsMode } from "../types";
+// import { ObjectDetailDrill } from "../drills/ObjectDetailDrill";
 
-export const ObjectMode: QueryMode = {
+export const ObjectMode: QueryClickActionsMode = {
   name: "object",
-  drills: [ObjectDetailDrill],
+  // drills: [ObjectDetailDrill],
 };

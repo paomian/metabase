@@ -15,7 +15,7 @@ import { PivotMode } from "../modes/PivotMode";
 import { NativeMode } from "../modes/NativeMode";
 import { DefaultMode } from "../modes/DefaultMode";
 import { Mode, getModeType } from "../Mode";
-import type { QueryMode } from "../types";
+import type { QueryClickActionsMode } from "../types";
 
 export function getMode(question: Question): Mode | null {
   const queryMode = getQueryMode(question);
@@ -23,7 +23,9 @@ export function getMode(question: Question): Mode | null {
 }
 
 // TODO [#26836]: remove "any" - unify ClickAction type
-export function getQueryMode(question: Question): QueryMode | any | null {
+export function getQueryMode(
+  question: Question,
+): QueryClickActionsMode | any | null {
   const mode = getModeType(question);
   if (!mode) {
     return null;

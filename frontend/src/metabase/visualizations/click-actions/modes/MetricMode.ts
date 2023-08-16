@@ -1,8 +1,9 @@
-import type { QueryMode } from "../types";
-import { PivotDrill } from "../drills/PivotDrill";
+import type { QueryClickActionsMode } from "../types";
+// import { PivotDrill } from "../drills/PivotDrill";
 import { DefaultMode } from "./DefaultMode";
 
-export const MetricMode: QueryMode = {
+export const MetricMode: QueryClickActionsMode = {
   name: "metric",
-  drills: [...DefaultMode.drills, PivotDrill],
+  // drills: [...DefaultMode.drills, PivotDrill],
+  clickActions: DefaultMode.clickActions,
 };

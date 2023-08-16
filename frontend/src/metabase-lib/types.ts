@@ -1,3 +1,5 @@
+import { DatasetColumn } from "metabase-types/api";
+
 /**
  * An "opaque type": this technique gives us a way to pass around opaque CLJS values that TS will track for us,
  * and in other files it gets treated like `unknown` so it can't be examined, manipulated or a new one created.
@@ -171,17 +173,32 @@ export type JoinStrategyDisplayInfo = {
 declare const DrillThru: unique symbol;
 export type DrillThru = unknown & { _opaque: typeof DrillThru };
 
-export type BaseDrillThruInfo<Type> = { type: Type };
+export type DrillThruType =
+  | "drill-thru/quick-filter"
+  | "drill-thru/pk"
+  | "drill-thru/zoom"
+  | "drill-thru/fk-details"
+  | "drill-thru/pivot"
+  | "drill-thru/fk-filter"
+  | "drill-thru/distribution"
+  | "drill-thru/sort"
+  | "drill-thru/summarize-column"
+  | "drill-thru/summarize-column-by-time"
+  | "drill-thru/column-filter"
+  | "drill-thru/underlying-records";
+
+export type BaseDrillThruInfo<Type extends DrillThruType> = { type: Type };
 
 export type QuickFilterDrillThruInfo =
   BaseDrillThruInfo<"drill-thru/quick-filter"> & {
     operators: Array<"=" | "≠" | "<" | ">">;
   };
 
-type ObjectDetailsDrillThruInfo<Type> = BaseDrillThruInfo<Type> & {
-  objectId: string | number;
-  manyPks: boolean;
-};
+type ObjectDetailsDrillThruInfo<Type extends DrillThruType> =
+  BaseDrillThruInfo<Type> & {
+    objectId: string | number;
+    manyPks: boolean;
+  };
 export type PKDrillThruInfo = ObjectDetailsDrillThruInfo<"drill-thru/pk">;
 export type ZoomDrillThruInfo = ObjectDetailsDrillThruInfo<"drill-thru/zoom">;
 export type FKDetailsDrillThruInfo =
@@ -229,8 +246,8 @@ export type DrillThruDisplayInfo =
   | UnderlyingRecordsDrillThruInfo;
 
 export interface Dimension {
-  column: Record<string, unknown>;
+  column: DatasetColumn;
   value?: any;
 }
 
-export type DataRow = Array<{ col: Record<string, unknown>; value: any }>;
+export type DataRow = Array<{ col: DatasetColumn; value: any }>;

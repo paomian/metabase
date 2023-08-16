@@ -1,4 +1,5 @@
 import * as ML from "cljs/metabase.lib.js";
+import { DatasetColumn } from "metabase-types/api";
 import type {
   ColumnMetadata,
   DataRow,
@@ -14,10 +15,10 @@ export function availableDrillThrus(
   // TODO: What is the right type for a JS column? (Not types.ts ColumnMetadata; that's the opaque CLJS type.)
   query: Query,
   stageIndex: number,
-  column: ColumnMetadata | Record<string, unknown>,
+  column: ColumnMetadata | DatasetColumn | undefined,
   value: any,
-  row: DataRow | null,
-  dimensions: Dimension[] | null,
+  row: DataRow | null | undefined,
+  dimensions: Dimension[] | null | undefined,
 ): DrillThru[] {
   return ML.available_drill_thrus(
     query,
