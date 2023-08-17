@@ -1,6 +1,11 @@
 (ns metabase.lib.drill-thru.progression
-  "Logic for when it's possible to \"drill down\" into some breakout on a query, seeing it at a finer level of detail.
-  ")
+  "Logic for when it's possible to \"drill down\" into some breakout on a query, seeing it at a finer level of detail."
+  (:require
+    [medley.core :as m]
+    [metabase.lib.metadata :as lib.metadata]
+    [metabase.lib.metadata.calculation :as lib.metadata.calculation]
+    [metabase.lib.options :as lib.options]
+    [metabase.lib.types.isa :as lib.types.isa]))
 
 (defn- field-columns-by-name [query stage-number dimensions]
   (let [by-name (m/index-by :name (lib.metadata.calculation/visible-columns query stage-number query))]
