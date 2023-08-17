@@ -1,4 +1,4 @@
-import { DatasetColumn } from "metabase-types/api";
+import { DatasetColumn, RowValue } from "metabase-types/api";
 
 /**
  * An "opaque type": this technique gives us a way to pass around opaque CLJS values that TS will track for us,
@@ -247,7 +247,7 @@ export type DrillThruDisplayInfo =
 
 export interface Dimension {
   column: DatasetColumn;
-  value?: any;
+  value?: RowValue;
 }
 
-export type DataRow = Array<{ col: DatasetColumn; value: any }>;
+export type DataRow = Array<{ col: DatasetColumn; value: RowValue }>;

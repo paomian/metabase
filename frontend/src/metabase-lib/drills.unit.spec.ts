@@ -1,8 +1,7 @@
-// eslint-disable-next-line no-restricted-imports
-import { checkNotNull } from "metabase/core/utils/types";
 import { displayInfo } from "metabase-lib/metadata";
 import { orderableColumns } from "metabase-lib/order_by";
 import { toLegacyQuery } from "metabase-lib/query";
+import { DrillThru, DrillThruType, Query } from "metabase-lib/types";
 import { availableDrillThrus, drillThru } from "./drills";
 import { columnFinder, createQuery } from "./test-helpers";
 
@@ -57,11 +56,11 @@ describe("drillThru", () => {
       null,
     );
 
-    const sortDrill = checkNotNull(
-      drills.find(
-        drill =>
-          displayInfo(query, stageIndex, drill)?.type === "drill-thru/sort",
-      ),
+    const sortDrill = findDrillByType(
+      drills,
+      "drill-thru/sort",
+      query,
+      stageIndex,
     );
 
     const updatedQuery = drillThru(query, stageIndex, sortDrill, "asc");
@@ -69,3 +68,20 @@ describe("drillThru", () => {
     expect(toLegacyQuery(updatedQuery)).toEqual({});
   });
 });
+
+function findDrillByType(
+  drills: DrillThru[],
+  drillType: DrillThruType,
+  query: Query,
+  stageIndex: number,
+): DrillThru {
+  const drill = drills.find(
+    drill => displayInfo(query, stageIndex, drill)?.type === drillType,
+  );
+
+  if (!drill) {
+    throw new TypeError();
+  }
+
+  return drill;
+}

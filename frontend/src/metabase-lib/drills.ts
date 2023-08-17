@@ -47,4 +47,6 @@ export function drillThru(
 // ML.pivot_columns_for_type;
 
 // Returns an array of pivot types that are available in this drill-thru, which must be a pivot drill-thru
-// ML.pivot_types;
+export function getAvailablePivotDrillTypes(drillThru: DrillThru) {
+  return ML.pivot_types(drillThru);
+}

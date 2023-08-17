@@ -9,7 +9,6 @@ import * as Lib from "metabase-lib";
 
 export const FKFilterDrill: DrillMLv2<Lib.FKFilterDrillThruInfo> = ({
   drill,
-  drillDisplayInfo,
   applyDrill,
   question,
   clicked,
