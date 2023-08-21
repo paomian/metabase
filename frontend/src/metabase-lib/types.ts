@@ -222,7 +222,7 @@ export type SummarizeColumnByTimeDrillThruInfo =
 
 export type ColumnFilterDrillThruInfo =
   BaseDrillThruInfo<"drill-thru/column-filter"> & {
-    initialOp: { short: string };
+    initialOp: { short: string } | null; // null gets returned for date column
   };
 
 export type UnderlyingRecordsDrillThruInfo =
@@ -250,4 +250,7 @@ export interface Dimension {
   value?: RowValue;
 }
 
-export type DataRow = Array<{ col: DatasetColumn; value: RowValue }>;
+export type DataRow = Array<{
+  col: DatasetColumn | ColumnMetadata;
+  value: RowValue;
+}>;

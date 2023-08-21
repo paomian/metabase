@@ -1,5 +1,5 @@
 import * as ML from "cljs/metabase.lib.js";
-import { DatasetColumn } from "metabase-types/api";
+import { DatasetColumn, RowValue } from "metabase-types/api";
 import type {
   ColumnMetadata,
   DataRow,
@@ -16,9 +16,9 @@ export function availableDrillThrus(
   query: Query,
   stageIndex: number,
   column: ColumnMetadata | DatasetColumn | undefined,
-  value: any,
-  row: DataRow | null | undefined,
-  dimensions: Dimension[] | null | undefined,
+  value: RowValue | undefined,
+  row: DataRow | undefined,
+  dimensions: Dimension[] | undefined,
 ): DrillThru[] {
   return ML.available_drill_thrus(
     query,

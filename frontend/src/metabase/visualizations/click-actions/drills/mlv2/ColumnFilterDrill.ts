@@ -11,24 +11,23 @@ export const ColumnFilterDrill: DrillMLv2<Lib.ColumnFilterDrillThruInfo> = ({
   question,
   clicked,
 }) => {
-  if (!drill || !drillDisplayInfo.initialOp) {
+  const query = question.query() as StructuredQuery;
+
+  if (!drill || !query) {
     return [];
   }
 
   const { initialOp } = drillDisplayInfo;
 
-  const query = question.query() as StructuredQuery;
-
   // TODO: refactor this after Filters will be added to MLv2
-  const initialFilter = new Filter(
-    [initialOp.short, clicked?.column?.field_ref],
-    null,
-    query,
-  );
+  const initialFilter =
+    initialOp?.short && clicked?.column?.field_ref
+      ? new Filter([initialOp.short, clicked.column.field_ref], null, query)
+      : clicked?.dimension?.defaultFilterForDimension();
 
   const popoverProps = {
     initialFilter,
-    query: question.query() as StructuredQuery,
+    query,
   };
 
   return [
