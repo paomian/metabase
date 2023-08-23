@@ -387,8 +387,6 @@
                                              :nfc_path      [:jsons "values" "qty"]
                                              :database_type "integer"}]]
           (qp.store/with-metadata-provider (u/the-id database)
-            (qp.store/fetch-and-store-tables! [(u/the-id table)])
-            (qp.store/fetch-and-store-fields! [(u/the-id val-field)])
             (let [field-clause [:field (u/the-id val-field) {:binning
                                                              {:strategy  :num-bins
                                                               :num-bins  100

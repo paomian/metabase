@@ -53,7 +53,7 @@
 (defn- query->all-table-ids [query]
   (let [ids (all-table-ids query)]
     (when (seq ids)
-      (qp.store/fetch-and-store-tables! ids)
+      (qp.store/bulk-metadata :metadata/table ids)
       (set ids))))
 
 (defn assert-one-gtap-per-table
@@ -228,7 +228,7 @@
       (t2/update! Card card-id {:result_metadata metadata}))
     ;; make sure the fetched Fields are present the QP store
     (when-let [field-ids (not-empty (filter some? (map :id metadata)))]
-      (qp.store/fetch-and-store-fields! field-ids))
+      (qp.store/bulk-metadata :metadata/column field-ids))
     (assoc source-query :source-metadata metadata)))
 
 
