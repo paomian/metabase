@@ -588,6 +588,4 @@
 
 (defmethod driver.sql/default-database-role :snowflake
   [_ database]
-  (or
-   (-> database :details :role)
-   "ACCOUNTADMIN"))
+  (-> database :details :role))
