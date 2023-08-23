@@ -174,7 +174,9 @@
   e.g. [[lib.metadata.protocols/field]].
 
   The order of the returned objects will match the order of `ids`, and the response is guaranteed to contain every
-  object referred to by `ids`. Throws an exception if any objects could not be fetched."
+  object referred to by `ids`. Throws an exception if any objects could not be fetched.
+
+  This can also be called for side-effects to warm the cache."
   [metadata-type :- [:enum :metadata/card :metadata/column :metadata/metric :metadata/segment :metadata/table]
    ids           :- [:maybe
                      [:or
@@ -202,7 +204,23 @@
 ;;;; DEPRECATED STUFF
 ;;;;
 
-(def ^:private LegacyDatabaseMetadata
+(mu/defn fetch-and-store-tables! :- :nil
+  "For warming the cache. Fetch Table(s) from the application database, and store them in the QP Store for the duration
+  of the current query execution. If Table(s) have already been fetched, this function will no-op."
+  {:deprecated "0.48.0"}
+  [table-ids :- IDs]
+  (bulk-metadata :metadata/table table-ids)
+  nil)
+
+(mu/defn fetch-and-store-fields! :- :nil
+  "For warming the cache. Fetch Field(s) from the application database, and store them in the QP Store for the duration
+  of the current query execution. If Field(s) have already been fetched, this function will no-op."
+  {:deprecated "0.48.0"}
+  [field-ids :- IDs]
+  (bulk-metadata :metadata/column field-ids)
+  nil)
+
+(def ^:private ^{:deprecated "0.48.0"} LegacyDatabaseMetadata
   [:map
    [:id       ::lib.schema.id/database]
    [:engine   :keyword]
@@ -210,12 +228,12 @@
    [:details  :map]
    [:settings [:maybe :map]]])
 
-(def ^:private LegacyTableMetadata
+(def ^:private ^{:deprecated "0.48.0"} LegacyTableMetadata
   [:map
    [:schema [:maybe :string]]
    [:name   ms/NonBlankString]])
 
-(def ^:private LegacyFieldMetadata
+(def ^:private ^{:deprecated "0.48.0"} LegacyFieldMetadata
   [:map
    [:name          ms/NonBlankString]
    [:table_id      ::lib.schema.common/positive-int]
@@ -232,13 +250,14 @@
    [:effective_type    {:optional true} [:maybe ms/FieldType]]
    [:coercion_strategy {:optional true} [:maybe ms/CoercionStrategy]]])
 
-(defn ^:deprecated ->legacy-metadata
+(defn ->legacy-metadata
   "For compatibility: convert MLv2-style metadata as returned by [[metabase.lib.metadata.protocols]]
   or [[metabase.lib.metadata]] functions
   (with `kebab-case` keys and `:lib/type`) to legacy QP/application database style metadata (with `snake_case` keys
   and Toucan 2 model `:type` metadata).
 
   Try to avoid using this, we would like to remove this in the near future."
+  {:deprecated "0.48.0"}
   [mlv2-metadata]
   (let [model (case (:lib/type mlv2-metadata)
                 :metadata/database :model/Database
@@ -249,38 +268,40 @@
         (update-keys u/->snake_case_en)
         (vary-meta assoc :type model))))
 
-;;; TODO -- these should be considered deprecated in favor of using MLv2 metadata directly via
-;;; the [[metabase.lib.metadata]] functions
-
+#_{:clj-kondo/ignore [:deprecated-var]}
 (mu/defn database :- LegacyDatabaseMetadata
   "Fetch the Database referenced by the current query from the QP Store. Throws an Exception if valid item is not
-  returned."
-  []
-  (-> (or (lib.metadata/database (metadata-provider))
-          (throw (ex-info (tru "Invalid MetadataProvider: Metadata provider failed to return a Database.")
-                          {:status-code 404
-                           :type        qp.error-type/invalid-query})))
-      #_{:clj-kondo/ignore [:deprecated-var]}
-      ->legacy-metadata))
+  returned.
 
-(mu/defn table :- LegacyTableMetadata
-  "Fetch Table with `table-id` from the QP Store. Throws an Exception if valid item is not returned."
+  Deprecated in favor of [[metabase.lib.metadata/database]] + [[metadata-provider]]."
+  {:deprecated "0.48.0"}
+  []
+  (->legacy-metadata (lib.metadata/database (metadata-provider))))
+
+#_{:clj-kondo/ignore [:deprecated-var]}
+(mu/defn ^:deprecated table :- LegacyTableMetadata
+  "Fetch Table with `table-id` from the QP Store. Throws an Exception if valid item is not returned.
+
+  Deprecated in favor of [[metabase.lib.metadata/table]] + [[metadata-provider]]."
+  {:deprecated "0.48.0"}
   [table-id :- ::lib.schema.id/table]
   (-> (or (lib.metadata.protocols/table (metadata-provider) table-id)
           (throw (ex-info (tru "Table {0} does not exist." (pr-str table-id))
                           {:status-code 404
                            :type        qp.error-type/invalid-query
                            :table-id    table-id})))
-      #_{:clj-kondo/ignore [:deprecated-var]}
       ->legacy-metadata))
 
-(mu/defn field :- LegacyFieldMetadata
-  "Fetch Field with `field-id` from the QP Store. Throws an Exception if valid item is not returned."
+#_{:clj-kondo/ignore [:deprecated-var]}
+(mu/defn ^:deprecated field :- LegacyFieldMetadata
+  "Fetch Field with `field-id` from the QP Store. Throws an Exception if valid item is not returned.
+
+  Deprecated in favor of [[metabase.lib.metadata/field]] + [[metadata-provider]]."
+  {:deprecated "0.48.0"}
   [field-id :- ::lib.schema.id/field]
   (-> (or (lib.metadata.protocols/field (metadata-provider) field-id)
           (throw (ex-info (tru "Field {0} does not exist." (pr-str field-id))
                           {:status-code 404
                            :type        qp.error-type/invalid-query
                            :field-id    field-id})))
-      #_{:clj-kondo/ignore [:deprecated-var]}
       ->legacy-metadata))

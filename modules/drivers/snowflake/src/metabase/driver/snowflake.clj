@@ -331,7 +331,7 @@
   ;; the store is always initialized when running QP queries; for some stuff like the test extensions DDL statements
   ;; it won't be, *but* they should already be qualified by database name anyway
   (when (qp.store/initialized?)
-    (db-name (qp.store/database))))
+    (db-name (lib.metadata/database (qp.store/metadata-provider)))))
 
 ;; unless we're currently using a table alias, we need to prepend Table and Field identifiers with the DB name for the
 ;; query

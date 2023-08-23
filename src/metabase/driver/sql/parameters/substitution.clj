@@ -13,20 +13,18 @@
    [metabase.driver.common.parameters.dates :as params.dates]
    [metabase.driver.common.parameters.operators :as params.ops]
    [metabase.driver.sql.query-processor :as sql.qp]
+   [metabase.lib.schema.common :as lib.schema.common]
    [metabase.mbql.schema :as mbql.s]
    [metabase.mbql.util :as mbql.u]
    [metabase.query-processor.error-type :as qp.error-type]
    [metabase.query-processor.middleware.wrap-value-literals
     :as qp.wrap-value-literals]
-   [metabase.query-processor.store :as qp.store]
    [metabase.query-processor.timezone :as qp.timezone]
    [metabase.query-processor.util.add-alias-info :as add]
    [metabase.util :as u]
    [metabase.util.date-2 :as u.date]
    [metabase.util.i18n :refer [tru]]
    [metabase.util.malli :as mu]
-   #_{:clj-kondo/ignore [:deprecated-namespace]}
-   [metabase.util.schema :as su]
    [schema.core :as s])
   (:import
    (clojure.lang IPersistentVector Keyword)
@@ -241,7 +239,7 @@
     ;; in case anyone needs to know we're compiling a Field filter.
     ::compiling-field-filter? true}])
 
-(s/defn ^:private field->identifier :- su/NonBlankString
+(mu/defn ^:private field->identifier :- ::lib.schema.common/non-blank-string
   "Return an approprate snippet to represent this `field` in SQL given its param type.
    For non-date Fields, this is just a quoted identifier; for dates, the SQL includes appropriately bucketing based on
    the `param-type`."
