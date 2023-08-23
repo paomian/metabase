@@ -150,12 +150,6 @@ export type ExpressionArg =
   | ColumnMetadata
   | Clause;
 
-export type ExternalOp = {
-  operator: string;
-  options: Record<string, unknown>;
-  args: [ColumnMetadata, ...ExpressionArg[]];
-};
-
 declare const Join: unique symbol;
 export type Join = unknown & { _opaque: typeof Join };
 
