@@ -232,21 +232,6 @@
    [:effective_type    {:optional true} [:maybe ms/FieldType]]
    [:coercion_strategy {:optional true} [:maybe ms/CoercionStrategy]]])
 
-;;; TODO -- these should be considered deprecated in favor of [[bulk-metadata]]
-(mu/defn fetch-and-store-tables! :- :nil
-  "For warming the cache. Fetch Table(s) from the application database, and store them in the QP Store for the duration
-  of the current query execution. If Table(s) have already been fetched, this function will no-op."
-  [table-ids :- IDs]
-  (bulk-metadata :metadata/table table-ids)
-  nil)
-
-(mu/defn fetch-and-store-fields! :- :nil
-  "For warming the cache. Fetch Field(s) from the application database, and store them in the QP Store for the duration
-  of the current query execution. If Field(s) have already been fetched, this function will no-op."
-  [field-ids :- IDs]
-  (bulk-metadata :metadata/column field-ids)
-  nil)
-
 (defn ^:deprecated ->legacy-metadata
   "For compatibility: convert MLv2-style metadata as returned by [[metabase.lib.metadata.protocols]]
   or [[metabase.lib.metadata]] functions
