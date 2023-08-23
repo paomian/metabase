@@ -6,7 +6,7 @@
    [metabase.test :as mt]))
 
 (defn- add-default-temporal-unit [query]
-  (mt/with-everything-store
+  (mt/with-metadata-provider (mt/id)
     (add-default-temporal-unit/add-default-temporal-unit query)))
 
 (deftest add-default-temporal-unit-test

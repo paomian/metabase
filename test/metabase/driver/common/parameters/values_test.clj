@@ -66,14 +66,14 @@
 (defn- value-for-tag
   "Call the private function and de-recordize the field"
   [field-info info]
-  (mt/with-everything-store
+  (mt/with-metadata-provider (mt/id)
     (mt/derecordize (#'params.values/value-for-tag field-info info))))
 
 (defn- extra-field-info
   "Add extra field information like coercion_strategy, semantic_type, and effective_type."
   [field]
   (mt/derecordize
-   (merge (mt/with-everything-store (qp.store/field (u/the-id field)))
+   (merge (mt/with-metadata-provider (mt/id) (qp.store/field (u/the-id field)))
           field)))
 
 (defn parse-tag
@@ -244,7 +244,7 @@
               :value  "2015-07-01"}])))))
 
 (deftest ^:parallel field-filter-default-values-test
-  (mt/with-everything-store
+  (mt/with-metadata-provider (mt/id)
     (testing "Make sure defaults values get picked up for field filter clauses"
       (is (= {:field (extra-field-info
                       {:id            (mt/id :checkins :date)
@@ -265,7 +265,7 @@
               nil))))))
 
 (deftest ^:parallel field-filter-nil-values-test
-  (mt/with-everything-store
+  (mt/with-metadata-provider (mt/id)
     (testing "Make sure nil values result in no value"
       (is (= {:field (extra-field-info
                       {:id             (mt/id :checkins :date)
@@ -315,7 +315,7 @@
                   []))))))
 
     (testing "Card query template tag generates native query for MBQL query"
-      (mt/with-everything-store
+      (mt/with-metadata-provider (mt/id)
         (driver/with-driver :h2
           (let [mbql-query   (mt/mbql-query venues
                                {:database (mt/id)

@@ -22,7 +22,7 @@
   (testing "check we fetch Fields in the right order"
     (mt/with-temp-vals-in-db Field (mt/id :venues :price) {:position -1}
       (let [ids       (map second
-                           (mt/with-everything-store
+                           (mt/with-metadata-provider (mt/id)
                              (#'qp.add-implicit-clauses/sorted-implicit-fields-for-table (mt/id :venues))))
             id->field (m/index-by :id (t2/select [Field :id :position :name :semantic_type] :id [:in ids]))]
         (is (= [ ;; sorted first because it has lowest positon
@@ -81,7 +81,7 @@
                  :order-by     [[:asc [:field 1 nil]]]})))))))
 
 (defn- add-implicit-fields [inner-query]
-  (mt/with-everything-store
+  (mt/with-metadata-provider (mt/id)
     (#'qp.add-implicit-clauses/add-implicit-fields inner-query)))
 
 (deftest ^:parallel add-order-bys-for-no-aggregations-test
@@ -112,7 +112,7 @@
 (deftest default-bucketing-test
   (testing "datetime Fields should get default bucketing of :day"
     (t2.with-temp/with-temp [Field field {:table_id (mt/id :venues), :position 2, :name "aaaaa", :base_type :type/DateTime}]
-      (mt/with-everything-store
+      (mt/with-metadata-provider (mt/id)
         (is (lib.types.isa/date? (lib.metadata/field (qp.store/metadata-provider) (:id field)))))
       (is (query= (:query
                    (mt/mbql-query venues
@@ -214,7 +214,7 @@
                    :fields)))))))
 
 (defn- add-implicit-clauses [query]
-  (mt/with-everything-store
+  (mt/with-metadata-provider (mt/id)
     (qp.add-implicit-clauses/add-implicit-clauses query)))
 
 (deftest add-implicit-fields-for-source-query-inside-join-test
@@ -243,7 +243,7 @@
 
 (deftest add-implicit-fields-skip-join-test
   (testing "Don't add implicit `:fields` clause to a JOIN even if we have source metadata"
-    (mt/with-everything-store
+    (mt/with-metadata-provider (mt/id)
       (is (query= (add-source-metadata/add-source-metadata-for-source-queries
                    (mt/mbql-query venues
                      {:joins    [{:source-query {:source-table $$categories

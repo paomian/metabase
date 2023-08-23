@@ -18,7 +18,7 @@
    (wrap-value-literals query "UTC"))
 
   ([query, ^String timezone-id]
-   (mt/with-everything-store
+   (mt/with-metadata-provider (mt/id)
      (mt/with-results-timezone-id timezone-id
        (qp.wrap-value-literals/wrap-value-literals query)))))
 

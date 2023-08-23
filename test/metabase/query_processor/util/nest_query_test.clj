@@ -19,7 +19,7 @@
    x))
 
 (defn- nest-expressions [query]
-  (mt/with-everything-store
+  (mt/with-metadata-provider (mt/id)
     (driver/with-driver :h2
       (-> query
           qp/preprocess
@@ -29,7 +29,7 @@
 
 (deftest ^:parallel nest-expressions-test
   (driver/with-driver :h2
-    (mt/with-everything-store
+    (mt/with-metadata-provider (mt/id)
       (is (partial= (mt/$ids venues
                       {:source-query {:source-table $$venues
                                       :expressions  {"double_price" [:* [:field %price {::add/source-table  $$venues
@@ -70,7 +70,7 @@
 
 (deftest ^:parallel nest-expressions-with-existing-non-expression-fields-test
   (driver/with-driver :h2
-    (mt/with-everything-store
+    (mt/with-metadata-provider (mt/id)
       (testing "Other `:fields` besides the `:expressions` should be preserved in the top level"
         (is (partial= (mt/$ids checkins
                         {:source-query {:source-table $$checkins
@@ -122,7 +122,7 @@
 (deftest ^:parallel multiple-expressions-test
   (testing "Make sure the nested version of the query doesn't mix up expressions if we have ones that reference others"
     (driver/with-driver :h2
-      (mt/with-everything-store
+      (mt/with-metadata-provider (mt/id)
         (is (partial= (mt/$ids venues
                         {:source-query {:source-table $$venues
                                         :expressions  {"big_price"
@@ -174,7 +174,7 @@
   (testing (str "When 'raising' :expression clauses, only raise ones in the current level. Handle duplicate expression "
                 "names correctly.")
     (driver/with-driver :h2
-      (mt/with-everything-store
+      (mt/with-metadata-provider (mt/id)
         (let [query (mt/mbql-query venues
                       {:source-query {:source-table $$venues
                                       :expressions  {"x" [:* $price 2]}
@@ -309,7 +309,7 @@
 
 (deftest ^:parallel nest-expressions-with-joins-test
   (driver/with-driver :h2
-    (mt/with-everything-store
+    (mt/with-metadata-provider (mt/id)
       (testing "If there are any `:joins`, those need to be nested into the `:source-query` as well."
         (is (partial= (mt/$ids venues
                         {:source-query {:source-table $$venues
@@ -521,7 +521,7 @@
 (deftest nest-expressions-eliminate-duplicate-coercion-test
   (testing "If coercion happens in the source query, don't do it a second time in the parent query (#12430)"
     (driver/with-driver :h2
-      (mt/with-everything-store
+      (mt/with-metadata-provider (mt/id)
         (mt/with-temp-vals-in-db Field (mt/id :venues :price) {:coercion_strategy :Coercion/UNIXSeconds->DateTime
                                                                :effective_type    :type/DateTime}
           (is (partial= (mt/$ids venues
@@ -558,7 +558,7 @@
   (testing "We should be able to compile a complicated query with multiple joins and expressions correctly"
     (driver/with-driver :h2
       (mt/dataset sample-dataset
-        (mt/with-everything-store
+        (mt/with-metadata-provider (mt/id)
           (is (partial= (mt/$ids orders
                           (merge {:source-query (let [product-id        [:field %product_id {::add/source-table  $$orders
                                                                                              ::add/source-alias  "PRODUCT_ID"
@@ -637,7 +637,7 @@
 (deftest ^:parallel uniquify-aliases-test
   (driver/with-driver :h2
     (mt/dataset sample-dataset
-      (mt/with-everything-store
+      (mt/with-metadata-provider (mt/id)
         (is (partial= (mt/$ids products
                         {:source-query       {:source-table $$products
                                               :expressions  {"CATEGORY" [:concat

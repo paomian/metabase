@@ -119,7 +119,7 @@
                                          :bin-width 30}}]]}
             :type     :query
             :database (mt/id)}
-           (mt/with-everything-store
+           (mt/with-metadata-provider (mt/id)
              (binning/update-binning-strategy
               {:query    {:source-table (mt/id :checkins)
                           :breakout     [[:field (u/the-id field) {:binning {:strategy :default}}]]}
@@ -136,7 +136,7 @@
                                                                              :bin-width 30}}]]}}
               :type     :query
               :database (mt/id)}
-             (mt/with-everything-store
+             (mt/with-metadata-provider (mt/id)
                (binning/update-binning-strategy
                 {:query    {:source-query
                             {:source-table (mt/id :checkins)

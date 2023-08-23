@@ -34,7 +34,7 @@
 
 (defn- substitute-params [query]
   (driver/with-driver :h2
-    (mt/with-everything-store
+    (mt/with-metadata-provider (mt/id)
       (parameters/substitute-parameters (mbql.normalize/normalize query)))))
 
 (deftest ^:parallel expand-mbql-top-level-params-test
